@@ -12,7 +12,7 @@ namespace XMLTool
     {
         public Content()
         {
-            mName = "My Content";
+            mName = "";
             mText = "";
             mActors = new List<string>();
             mVideos = new List<Video>();

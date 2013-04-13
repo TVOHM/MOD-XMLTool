@@ -15,6 +15,11 @@ namespace XMLTool
         public App()
         {
             mName = "MyApplication";
+
+            MemoryStream ms = new MemoryStream();
+            Properties.Resources.default_image.Save(ms, System.Drawing.Imaging.ImageFormat.Png);
+            mIcon = ms.ToArray();
+
             mContents = new List<Content>();
             mActors = new List<string>();
         }
