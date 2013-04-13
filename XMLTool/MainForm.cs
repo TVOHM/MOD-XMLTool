@@ -223,10 +223,26 @@ namespace XMLTool
                 contentObjectVideosUpButton.Enabled = false;
                 contentObjectVideosDeleteButton.Enabled = false;
                 contentObjectVideosDownButton.Enabled = false;
-                mVideo = mContent.mVideos.ElementAt(contentObjectVideosListBox.SelectedIndex);
+                mVideo = null;
             }
             else
             {
+                videoNameTextBox.Enabled = true;
+                videoIconLoadButton.Enabled = true;
+                videoVideoLoadButton.Enabled = true;
+                contentObjectVideosDeleteButton.Enabled = true;
+
+                if (contentObjectVideosListBox.SelectedIndex != 0)
+                    contentObjectVideosUpButton.Enabled = true;
+                else
+                    contentObjectVideosUpButton.Enabled = false;
+
+                if (contentObjectVideosListBox.SelectedIndex != contentObjectVideosListBox.Items.Count - 1)
+                    contentObjectVideosDownButton.Enabled = true;
+                else
+                    contentObjectVideosDownButton.Enabled = false;
+
+                mVideo = mContent.mVideos.ElementAt(contentObjectVideosListBox.SelectedIndex);
             }
 
             updateVideoFields();
@@ -234,6 +250,15 @@ namespace XMLTool
 
         private void updateVideoFields()
         {
+            if (mVideo == null)
+            {
+                videoNameTextBox.Text = "";
+                axWindowsMediaPlayer1.Ctlcontrols.stop();
+            }
+            else
+            {
+                videoNameTextBox.Text = mVideo.mName;
+            }
         }
 
         private void videoNameTextBox_TextChanged(object sender, EventArgs e)
@@ -253,6 +278,23 @@ namespace XMLTool
                 }
                 else
                     MessageBox.Show(openImageFileDialog.FileName + " is not a valid image file", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
+        private void videoVideoLoadButton_Click(object sender, EventArgs e)
+        {
+            DialogResult result = openVideoFileDialog.ShowDialog();
+            if (result == DialogResult.OK)
+            {
+                mVideo.mData = File.ReadAllBytes(openVideoFileDialog.FileName);
+                axWindowsMediaPlayer1.Ctlcontrols.stop();
+                axWindowsMediaPlayer1.currentPlaylist.clear();
+                using (FileStream fs = File.Create("video.mp4"))
+                {
+                    fs.Write(mVideo.mData, 0, mVideo.mData.Length);
+                }
+                axWindowsMediaPlayer1.URL = "video.mp4";
+                axWindowsMediaPlayer1.settings.playCount = 1000000;
             }
         }
     }
