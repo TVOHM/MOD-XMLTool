@@ -15,15 +15,15 @@ namespace XMLTool
         public App()
         {
             mName = "MyApplication";
-            mContent = new List<Content>();
-            mActors = new HashSet<string>();
+            mContents = new List<Content>();
+            mActors = new List<string>();
         }
 
         public App(App app)
         {
             mName = app.mName;
             mIcon = app.mIcon;
-            mContent = app.mContent;
+            mContents = app.mContents;
         }
 
         [XmlAttribute("name")]
@@ -33,10 +33,10 @@ namespace XMLTool
         public byte[] mIcon { get; set; }
 
         [XmlElement("content")]
-        public List<Content> mContent { get; set; }
+        public List<Content> mContents { get; set; }
 
         [XmlElement("actor")]
-        public HashSet<string> mActors { get; set; }
+        public List<string> mActors { get; set; }
 
         public void save(string file)
         {

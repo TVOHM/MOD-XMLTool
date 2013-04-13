@@ -10,6 +10,13 @@ namespace XMLTool
 {
     public class Video
     {
+        public Video()
+        {
+            mName = "My Video";
+            mData = null;
+            mIcon = null;
+        }
+
         [XmlAttribute("name")]
         public String mName { get; set; }
 
