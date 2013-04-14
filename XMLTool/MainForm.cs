@@ -210,11 +210,13 @@ namespace XMLTool
             {
                 contentsListBoxDeleteButton.Enabled = true;
 
+                // Only enable up button if the selected item is not the top item
                 if(contentsListBox.SelectedIndex != 0)
                     contentsListBoxUpButton.Enabled = true;
                 else
                     contentsListBoxUpButton.Enabled = false;
 
+                // Only enable down button if the selected item is not the top item
                 if (contentsListBox.SelectedIndex != contentsListBox.Items.Count - 1)
                     contentsListBoxDownButton.Enabled = true;
                 else
@@ -223,15 +225,25 @@ namespace XMLTool
                 contentObjectVideosNewButton.Enabled = true;
             }
 
+            // De-select any currently selected videos as the content has changed
             contentObjectVideosListBox.SelectedIndex = -1;
+            // Update the content fields in the form based on the new selection
             updateContentObjectFields(contentsListBox.SelectedIndex);
         }
 
+        /// <summary>
+        /// Updates the contents views based upon the selected index in the contentsListBox
+        /// </summary>
+        /// <param name="selectedIndex">The selected index in contentsListBox</param>
         private void updateContentObjectFields(int selectedIndex)
         {
+            // If some content is selected, views need to be enabled and populated
             if(selectedIndex != -1)
             {
+                // Set the current content object to the corresponding content object in the app store
                 mContent = mApp.mContents.ElementAt(selectedIndex);
+
+                // Enable all the following views and populate them with the correct data
                 contentObjectNameTextBox.Enabled = true;
                 contentObjectNameTextBox.Text = mContent.mName;
 
@@ -239,11 +251,9 @@ namespace XMLTool
                 for(int i = 0; i < contentObjectActorsCheckedListBox.Items.Count; i++)
                     contentObjectActorsCheckedListBox.SetItemCheckState(i, CheckState.Unchecked);
 
+                // Check the correct actors in the contentObjectActorsCheckedListBox
                 for (int i = 0; i < mContent.mActors.Count; i++)
-                {
-                    contentObjectActorsCheckedListBox.SetItemCheckState(contentObjectActorsCheckedListBox.FindString(mContent.mActors.ElementAt(i)),
-                        CheckState.Checked);
-                }
+                    contentObjectActorsCheckedListBox.SetItemCheckState(contentObjectActorsCheckedListBox.FindString(mContent.mActors.ElementAt(i)), CheckState.Checked);
 
                 contentObjectTextTextBox.Enabled = true;
                 contentObjectTextTextBox.Text = mContent.mText;
@@ -253,12 +263,17 @@ namespace XMLTool
                 foreach (var video in mContent.mVideos)
                     contentObjectVideosListBox.Items.Add(video.mName);
             }
+            // If nothing is selected, some views need to be disabled and cleared as there is not active selection
             else
             {
+                // The current content object is set to a dummy object - any changes or references here will be discarded
                 mContent = new Content();
+
+                // Disable and clear all the following controls
                 contentObjectNameTextBox.Enabled = false;
                 contentObjectNameTextBox.Text = "";
 
+                // Uncheck all actors in the contentObjectActorsCheckedListBox
                 contentObjectActorsCheckedListBox.Enabled = false;
                 for (int i = 0; i < contentObjectActorsCheckedListBox.Items.Count; i++)
                     contentObjectActorsCheckedListBox.SetItemCheckState(i, CheckState.Unchecked);
@@ -271,31 +286,53 @@ namespace XMLTool
             }
         }
 
+        /// <summary>
+        /// Called when the new content button is clicked. Creates a new content object.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void contentsListBoxNewButton_Click(object sender, EventArgs e)
         {
+            // Create a new content object
             mContent = new Content();
+            // Assign it a default name
             mContent.mName = "My Content";
+            // Add it to the app store
             mApp.mContents.Add(mContent);
+            // Add this to the contentsListBox and set it to be the current focus
             contentsListBox.Items.Add(mContent.mName);
             contentsListBox.SelectedIndex = contentsListBox.Items.Count - 1;
         }
 
+        /// <summary>
+        /// Called when the delete content button is clicked. Removes the currently selected content object.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void contentsListBoxDeleteButton_Click(object sender, EventArgs e)
         {
+            // Remove from the app store
             mApp.mContents.RemoveAt(contentsListBox.SelectedIndex);
+            // Remove from the contentsListBox
             contentsListBox.Items.RemoveAt(contentsListBox.SelectedIndex);
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void contentObjectNameTextBox_TextChanged(object sender, EventArgs e)
         {
             if (contentsListBox.SelectedIndex != -1)
             {
                 mContent.mName = contentObjectNameTextBox.Text;
+                // HACK Remove the contentsListBox slected index changed event as modifying the contents actually fires this event and we don't want this to happen
                 contentsListBox.SelectedIndexChanged -= contentsListBox_SelectedIndexChanged;
                 contentsListBox.Items[contentsListBox.SelectedIndex] = contentObjectNameTextBox.Text;
-                contentsListBox.SelectedIndexChanged += contentsListBox_SelectedIndexChanged;
+                // HACK Add event back
+                contentsListBox.SelectedIndexChanged += contentsListBox_SelectedIndexChanged; 
                 contentObjectNameTextBox.Focus();
-                contentObjectNameTextBox.Select(contentObjectNameTextBox.Text.Length, 0);
             }
         }
 
@@ -366,7 +403,6 @@ namespace XMLTool
                 contentObjectVideosListBox.Items[contentObjectVideosListBox.SelectedIndex] = videoNameTextBox.Text;
                 contentObjectVideosListBox.SelectedIndexChanged += contentObjectVideosListBox_SelectedIndexChanged;
                 videoNameTextBox.Focus();
-                videoNameTextBox.Select(videoNameTextBox.Text.Length, 0);
             }
         }
 
