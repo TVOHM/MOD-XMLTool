@@ -14,7 +14,7 @@ namespace XMLTool
     {
         public App()
         {
-            mName = "MyApplication";
+            mName = "My Application";
 
             MemoryStream ms = new MemoryStream();
             Properties.Resources.default_image.Save(ms, System.Drawing.Imaging.ImageFormat.Png);

@@ -14,11 +14,11 @@ namespace XMLTool
 {
     public partial class MainForm : Form
     {
-        private App mApp = new App();
+        public App mApp = new App();
 
-        private Content mContent = null;
+        public Content mContent = null;
 
-        private Video mVideo = null;
+        public Video mVideo = null;
 
         public MainForm()
         {
@@ -114,7 +114,7 @@ namespace XMLTool
 
         private void applicationNameTextBox_TextChanged(object sender, EventArgs e)
         {
-            mApp.mName = ((TextBox)sender).Text;
+            mApp.mName = applicationNameTextBox.Text;
         }
 
         private void contentsListBox_SelectedIndexChanged(object sender, EventArgs e)
@@ -239,20 +239,19 @@ namespace XMLTool
                 videoNameTextBox.Enabled = false;
                 videoIconPictureBox.Enabled = false;
                 videoIconLoadButton.Enabled = false;
+                videoVideoPlayButton.Enabled = false;
                 videoVideoLoadButton.Enabled = false;
                 contentObjectVideosUpButton.Enabled = false;
                 contentObjectVideosDeleteButton.Enabled = false;
                 contentObjectVideosDownButton.Enabled = false;
 
                 mVideo = new Video();
-
-                axWindowsMediaPlayer1.Ctlcontrols.stop();
-                axWindowsMediaPlayer1.currentPlaylist.clear();
             }
             else
             {
                 videoNameTextBox.Enabled = true;
                 videoIconPictureBox.Enabled = true;
+                videoVideoPlayButton.Enabled = true;
                 videoIconLoadButton.Enabled = true;
                 videoVideoLoadButton.Enabled = true;
                 contentObjectVideosDeleteButton.Enabled = true;
@@ -268,7 +267,6 @@ namespace XMLTool
                     contentObjectVideosDownButton.Enabled = false;
 
                 mVideo = mContent.mVideos.ElementAt(contentObjectVideosListBox.SelectedIndex);
-                playVideo();
             }
 
             videoNameTextBox.Text = mVideo.mName;
@@ -312,30 +310,7 @@ namespace XMLTool
             if (result == DialogResult.OK)
             {
                 mVideo.mData = File.ReadAllBytes(openVideoFileDialog.FileName);
-                playVideo();
             }
-        }
-
-        private void playVideo()
-        {
-            BackgroundWorker bw = new BackgroundWorker();
-
-            bw.DoWork += new DoWorkEventHandler(
-                    delegate(object o, DoWorkEventArgs args)
-                    {
-                        BackgroundWorker b = o as BackgroundWorker;
-
-                        axWindowsMediaPlayer1.Ctlcontrols.stop();
-                        axWindowsMediaPlayer1.currentPlaylist.clear();
-                        using (FileStream fs = File.Create("video.mp4"))
-                        {
-                            fs.Write(mVideo.mData, 0, mVideo.mData.Length);
-                        }
-                        axWindowsMediaPlayer1.URL = "video.mp4";
-                        axWindowsMediaPlayer1.settings.playCount = 999999999;
-
-                    });
-            bw.RunWorkerAsync();
         }
 
         private void contentObjectActorsCheckedListBox_SelectedIndexChanged(object sender, EventArgs e)
@@ -550,6 +525,17 @@ namespace XMLTool
         private void aboutToolStripMenuItem_Click(object sender, EventArgs e)
         {
             MessageBox.Show("Version 2.0\nTeam7 ISYBATH\nIan Edwards 2013\nianpedwards87@gmail.com", "About", MessageBoxButtons.OK, MessageBoxIcon.Information);
+        }
+
+        private void videoVideoPlayButton_Click(object sender, EventArgs e)
+        {
+            string temp = Path.GetTempPath() + "video.mp4";
+            using (FileStream fs = File.Create(temp))
+            {
+                fs.Write(mVideo.mData, 0, mVideo.mData.Length);
+                fs.Close();
+                Process.Start(temp);
+            }
         }
     }
 }
