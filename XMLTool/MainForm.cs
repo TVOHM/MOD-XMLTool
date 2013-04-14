@@ -12,26 +12,48 @@ using System.Diagnostics;
 
 namespace XMLTool
 {
+    /// <summary>
+    /// The main for that is used for UI, contains all editable elements of the application
+    /// </summary>
     public partial class MainForm : Form
     {
+        /// <summary>
+        /// The application object used to store the app data
+        /// </summary>
         public App mApp = new App();
 
-        public Content mContent = null;
+        /// <summary>
+        /// The currently selected content object in the app
+        /// </summary>
+        public Content mContent = new Content();
 
-        public Video mVideo = null;
+        /// <summary>
+        /// The currently selected video object inside the currently selected content object
+        /// </summary>
+        public Video mVideo = new Video();
 
+        /// <summary>
+        /// Constructor initialises the form
+        /// </summary>
         public MainForm()
         {
             InitializeComponent();
         }
 
+        /// <summary>
+        /// Called when the selected index in the actors list box is changed to update the state of the actor edit and delete buttons on the form
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void actorsListBox_SelectedIndexChanged(object sender, EventArgs e)
         {
+            // If no actor is selected, the delete and edit buttons are disabled
             if (actorsListBox.SelectedIndex == -1)
             {
                 actorsListViewDeleteButton.Enabled = false;
                 actorsListViewEditButton.Enabled = false;
             }
+            // If an actor is selected the edit and delete buttons are enabled.
             else
             {
                 actorsListViewDeleteButton.Enabled = true;
@@ -39,30 +61,47 @@ namespace XMLTool
             }
         }
 
+        /// <summary>
+        /// Called when the new actor button is clicked, appends an actor to the actors list.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void actorsListViewNewButton_Click(object sender, EventArgs e)
         {
+            // Open the text input form
             TextInputForm dialog = new TextInputForm("Add Actor");
             DialogResult result = dialog.ShowDialog();
+            // If the user clicks OK and the result is not empty
             if (result != DialogResult.Cancel && dialog.mInput.Length != 0)
             {
+                // Ensure that this actor does not already exist
                 if (mApp.mActors.Contains(dialog.mInput))
                 {
+                    // Report an error if duplicate
                     MessageBox.Show("Duplicate actor name \"" + dialog.mInput + "\"", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 }
                 else
                 {
+                    // Add the unique actor
                     actorsListBox.Items.Add(dialog.mInput);
+                    // Copy the contents of actorsListBox to update the store in mApp
                     mApp.mActors = actorsListBox.Items.OfType<string>().ToList();
+                    // Also update the available options in contentObjectActorsCheckedListBox
                     contentObjectActorsCheckedListBox.Items.Add(dialog.mInput);
                 }
             }
         }
 
+        /// <summary>
+        /// Called when the edit actor button is clicked. Edits an existing actor.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void actorsListViewEditButton_Click(object sender, EventArgs e)
         {
             TextInputForm dialog = new TextInputForm("Edit Actor", actorsListBox.Items[actorsListBox.SelectedIndex].ToString());
             DialogResult result = dialog.ShowDialog();
-            if (result != DialogResult.Cancel && dialog.mInput.Length != 0)
+            if (result != DialogResult.Cancel && dialog.mInput.Length != 0 && dialog.mInput != actorsListBox.Items[actorsListBox.SelectedIndex].ToString())
             {
                 if (mApp.mActors.Contains(dialog.mInput))
                 {
