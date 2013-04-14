@@ -142,25 +142,37 @@ namespace XMLTool
         /// <param name="e"></param>
         private void applicationIconLoadButton_Click(object sender, EventArgs e)
         {
+            // Get the user to navigate to an image file using the openImageFileDialog
             DialogResult result = openImageFileDialog.ShowDialog();
             if (result == DialogResult.OK)
             {
+                // If OK is clicked, validate that this is an image file
                 if (isValidImage(openImageFileDialog.FileName))
                 {
+                    // Load the image into the picture box to display it
                     applicationIconPictureBox.Load(openImageFileDialog.FileName);
+                    // Load the image data into the application store for the icon
                     mApp.mIcon = File.ReadAllBytes(openImageFileDialog.FileName);
                 }
+                // Report if the image is invalid
                 else
                     MessageBox.Show(openImageFileDialog.FileName + " is not a valid image file", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
 
+        /// <summary>
+        /// Asserts that a file is a valid image file
+        /// </summary>
+        /// <param name="fileName"></param>
+        /// <returns>True if file is valid, else false</returns>
         bool isValidImage(string fileName)
         {
+            // Try create a new image with the file
             try
            {
                Image newImage = Image.FromFile(fileName);
             }
+            // Throws OutOfMemoryException if file is invalid
             catch (OutOfMemoryException ex)
             {
                 return false;
@@ -168,19 +180,32 @@ namespace XMLTool
             return true;
         }
 
+        /// <summary>
+        /// Called when the applicationNameTextBox is modified and passes on the new name to the application store
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void applicationNameTextBox_TextChanged(object sender, EventArgs e)
         {
             mApp.mName = applicationNameTextBox.Text;
         }
 
+        /// <summary>
+        /// Called when the selected content in the contents list box is changed. Used to modify which buttons are available.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void contentsListBox_SelectedIndexChanged(object sender, EventArgs e)
         {
+            // If nothing is selected
             if (contentsListBox.SelectedIndex == -1)
             {
+                // Disable the up down and delete buttons
                 contentsListBoxDeleteButton.Enabled = false;
                 contentsListBoxUpButton.Enabled = false;
                 contentsListBoxDownButton.Enabled = false;
             }
+            // Else something is selected
             else
             {
                 contentsListBoxDeleteButton.Enabled = true;
