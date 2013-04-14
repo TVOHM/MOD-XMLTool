@@ -635,6 +635,7 @@ namespace XMLTool
                     contentObjectActorsCheckedListBox.Items.Add(actor);
                 }
 
+                contentsListBox.SelectedIndex = -1;
                 contentsListBox.Items.Clear();
                 foreach (Content content in mApp.mContents)
                     contentsListBox.Items.Add(content.mName);
@@ -647,12 +648,6 @@ namespace XMLTool
 
             if (result == System.Windows.Forms.DialogResult.Yes)
             {
-                contentObjectVideosListBox.SelectedIndex = -1;
-                contentObjectVideosListBox.Items.Clear();
-
-                contentsListBox.SelectedIndex = -1;
-                contentsListBox.Items.Clear();
-                /*
                 mApp = new App();
                 mContent = new Content();
                 mVideo = new Video();
@@ -666,12 +661,8 @@ namespace XMLTool
                 actorsListBox.Items.Clear();
                 contentObjectActorsCheckedListBox.Items.Clear();
 
-                contentsListBox.Items.Clear();
                 contentsListBox.SelectedIndex = -1;
-
-                contentObjectVideosListBox.Items.Clear();
-                contentObjectVideosListBox.SelectedIndex = -1;
-                 * */
+                contentsListBox.Items.Clear();
             }
         }
 
