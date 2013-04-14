@@ -537,5 +537,10 @@ namespace XMLTool
                 Process.Start(temp);
             }
         }
+
+        private void exportToAndroidToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            MessageBox.Show("Not implemented yet", "Info", MessageBoxButtons.OK, MessageBoxIcon.Information);
+        }
     }
 }
