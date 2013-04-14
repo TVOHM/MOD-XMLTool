@@ -204,6 +204,7 @@ namespace XMLTool
                 contentsListBoxDeleteButton.Enabled = false;
                 contentsListBoxUpButton.Enabled = false;
                 contentsListBoxDownButton.Enabled = false;
+                contentObjectVideosNewButton.Enabled = false;
             }
             // Else something is selected
             else
@@ -318,12 +319,13 @@ namespace XMLTool
         }
 
         /// <summary>
-        /// 
+        /// Called when the name of a content item is modified. Updates all instances of this name
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
         private void contentObjectNameTextBox_TextChanged(object sender, EventArgs e)
         {
+            // This function can be called by the framework when there is no selection - take no action in this instance
             if (contentsListBox.SelectedIndex != -1)
             {
                 mContent.mName = contentObjectNameTextBox.Text;
@@ -331,29 +333,53 @@ namespace XMLTool
                 contentsListBox.SelectedIndexChanged -= contentsListBox_SelectedIndexChanged;
                 contentsListBox.Items[contentsListBox.SelectedIndex] = contentObjectNameTextBox.Text;
                 // HACK Add event back
-                contentsListBox.SelectedIndexChanged += contentsListBox_SelectedIndexChanged; 
+                contentsListBox.SelectedIndexChanged += contentsListBox_SelectedIndexChanged;
+                // Give focus back to the text box
                 contentObjectNameTextBox.Focus();
             }
         }
 
+        /// <summary>
+        /// Called when the text TextBox for content is changed and updates the corresponding app store variables
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void contentObjectTextTextBox_TextChanged(object sender, EventArgs e)
         {
             mContent.mText = contentObjectTextTextBox.Text;
         }
 
+        /// <summary>
+        /// Called when the new video button is pressed. Creates a new video object.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void contentObjectVideosNewButton_Click(object sender, EventArgs e)
         {
+            // Create the new video
             mVideo = new Video();
+            // Set the default name
             mVideo.mName = "My Video";
+            // Add the video to the app store
             mContent.mVideos.Add(mVideo);
+            // Add this video to the contentObjectVideosListBox and select it
             contentObjectVideosListBox.Items.Add(mVideo.mName);
             contentObjectVideosListBox.SelectedIndex = contentObjectVideosListBox.Items.Count - 1;
         }
 
+        /// <summary>
+        /// Called when the selected video is changed. Used to disable and enable views as appropriate.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void contentObjectVideosListBox_SelectedIndexChanged(object sender, EventArgs e)
         {
+            // If nothing is selected
             if (contentObjectVideosListBox.SelectedIndex == -1)
             {
+                // The current video object is set to a dummy object - any changes or references here will be discarded
+                mVideo = new Video();
+                // Disable all video interation buttons
                 videoNameTextBox.Enabled = false;
                 videoIconPictureBox.Enabled = false;
                 videoIconLoadButton.Enabled = false;
@@ -362,46 +388,65 @@ namespace XMLTool
                 contentObjectVideosUpButton.Enabled = false;
                 contentObjectVideosDeleteButton.Enabled = false;
                 contentObjectVideosDownButton.Enabled = false;
-
-                mVideo = new Video();
             }
+            // Else something is selected
             else
             {
+                // The current video object is set to be the object that corresponds to the selected contentObjectVideosListBox index
+                mVideo = mContent.mVideos.ElementAt(contentObjectVideosListBox.SelectedIndex);
+
+                // Enable most video interaction buttons
                 videoNameTextBox.Enabled = true;
                 videoIconPictureBox.Enabled = true;
-                videoVideoPlayButton.Enabled = true;
+                // If there is no video data, do not enable the play button
+                if (mVideo.mData.Length != 0)
+                    videoVideoPlayButton.Enabled = true;
+                else
+                    videoVideoPlayButton.Enabled = false;
+
                 videoIconLoadButton.Enabled = true;
                 videoVideoLoadButton.Enabled = true;
                 contentObjectVideosDeleteButton.Enabled = true;
 
+                // Only enable up button if the selected item is not the top item
                 if (contentObjectVideosListBox.SelectedIndex != 0)
                     contentObjectVideosUpButton.Enabled = true;
                 else
                     contentObjectVideosUpButton.Enabled = false;
 
+                // Only enable down button if the selected item is not the top item
                 if (contentObjectVideosListBox.SelectedIndex != contentObjectVideosListBox.Items.Count - 1)
                     contentObjectVideosDownButton.Enabled = true;
                 else
                     contentObjectVideosDownButton.Enabled = false;
-
-                mVideo = mContent.mVideos.ElementAt(contentObjectVideosListBox.SelectedIndex);
             }
 
+            // Update the video name
             videoNameTextBox.Text = mVideo.mName;
 
+            // Load the video icon into the videoIconPictureBox
             MemoryStream ms = new MemoryStream(mVideo.mIcon, 0, mVideo.mIcon.Length);
             ms.Write(mVideo.mIcon, 0, mVideo.mIcon.Length);
             videoIconPictureBox.Image = Image.FromStream(ms);
         }
 
+        /// <summary>
+        ///  Called when the video name TextBox is modified and updates the video name data
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void videoNameTextBox_TextChanged(object sender, EventArgs e)
         {
+            // This function can be called by the framework when there is no selection - take no action in this instance
             if (contentObjectVideosListBox.SelectedIndex != -1)
             {
                 mVideo.mName = videoNameTextBox.Text;
+                // HACK Remove the contentObjectVideosListBox selected index changed event as modifying the contents actually fires this event and we don't want this to happen
                 contentObjectVideosListBox.SelectedIndexChanged -= contentObjectVideosListBox_SelectedIndexChanged;
                 contentObjectVideosListBox.Items[contentObjectVideosListBox.SelectedIndex] = videoNameTextBox.Text;
+                // HACK Add the event back
                 contentObjectVideosListBox.SelectedIndexChanged += contentObjectVideosListBox_SelectedIndexChanged;
+                // Give the text box focus
                 videoNameTextBox.Focus();
             }
         }
@@ -427,6 +472,7 @@ namespace XMLTool
             if (result == DialogResult.OK)
             {
                 mVideo.mData = File.ReadAllBytes(openVideoFileDialog.FileName);
+                videoVideoPlayButton.Enabled = true;
             }
         }
 
@@ -601,6 +647,12 @@ namespace XMLTool
 
             if (result == System.Windows.Forms.DialogResult.Yes)
             {
+                contentObjectVideosListBox.SelectedIndex = -1;
+                contentObjectVideosListBox.Items.Clear();
+
+                contentsListBox.SelectedIndex = -1;
+                contentsListBox.Items.Clear();
+                /*
                 mApp = new App();
                 mContent = new Content();
                 mVideo = new Video();
@@ -615,6 +667,11 @@ namespace XMLTool
                 contentObjectActorsCheckedListBox.Items.Clear();
 
                 contentsListBox.Items.Clear();
+                contentsListBox.SelectedIndex = -1;
+
+                contentObjectVideosListBox.Items.Clear();
+                contentObjectVideosListBox.SelectedIndex = -1;
+                 * */
             }
         }
 

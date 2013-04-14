@@ -100,9 +100,6 @@
     <None Include="Resources\default_image.png" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Resources\default_video.mp4" />
-  </ItemGroup>
-  <ItemGroup>
     <Content Include="program_icon.ico" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

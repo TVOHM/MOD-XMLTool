@@ -19,7 +19,7 @@ namespace XMLTool
             Properties.Resources.default_image.Save(ms, System.Drawing.Imaging.ImageFormat.Png);
             mIcon = ms.ToArray();
 
-            mData = Properties.Resources.default_video;
+            mData = new byte[0];
         }
 
         [XmlAttribute("name")]

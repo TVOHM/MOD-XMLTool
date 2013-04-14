@@ -69,15 +69,5 @@ namespace XMLTool.Properties {
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Byte[].
-        /// </summary>
-        internal static byte[] default_video {
-            get {
-                object obj = ResourceManager.GetObject("default_video", resourceCulture);
-                return ((byte[])(obj));
-            }
-        }
     }
 }
