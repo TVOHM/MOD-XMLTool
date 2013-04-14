@@ -99,30 +99,47 @@ namespace XMLTool
         /// <param name="e"></param>
         private void actorsListViewEditButton_Click(object sender, EventArgs e)
         {
+            // Open the text input form
             TextInputForm dialog = new TextInputForm("Edit Actor", actorsListBox.Items[actorsListBox.SelectedIndex].ToString());
             DialogResult result = dialog.ShowDialog();
+            // Only progress if the user clicks OK, the input is not empty and the input has been changed
             if (result != DialogResult.Cancel && dialog.mInput.Length != 0 && dialog.mInput != actorsListBox.Items[actorsListBox.SelectedIndex].ToString())
             {
+                // Report the error if the edited name duplicates another actor
                 if (mApp.mActors.Contains(dialog.mInput))
                 {
                     MessageBox.Show("Duplicate actor name \"" + dialog.mInput + "\"", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 }
                 else
                 {
+                    // If everything is ok, update the list box
                     actorsListBox.Items[actorsListBox.SelectedIndex] = dialog.mInput;
+                    // Update the contentObjectActorsCheckedListBox too
                     contentObjectActorsCheckedListBox.Items[actorsListBox.SelectedIndex] = dialog.mInput;
+                    // Update the app store for actors
                     mApp.mActors = actorsListBox.Items.OfType<string>().ToList();
                 }
             }
         }
 
+        /// <summary>
+        /// Called when the delete actor button is pressed
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void actorsListViewDeleteButton_Click(object sender, EventArgs e)
         {
+            // Removes the actor from the listBox, the checkedListBox and mApp.Actors
             contentObjectActorsCheckedListBox.Items.RemoveAt(actorsListBox.SelectedIndex);
             mApp.mActors.RemoveAt(actorsListBox.SelectedIndex);
             actorsListBox.Items.RemoveAt(actorsListBox.SelectedIndex);
         }
 
+        /// <summary>
+        /// Called when the load icon button is pressed to load a new application Icon
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void applicationIconLoadButton_Click(object sender, EventArgs e)
         {
             DialogResult result = openImageFileDialog.ShowDialog();

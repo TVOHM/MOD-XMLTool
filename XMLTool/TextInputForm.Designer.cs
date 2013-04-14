@@ -39,7 +39,7 @@
             this.inputTextBox.Location = new System.Drawing.Point(12, 12);
             this.inputTextBox.Name = "inputTextBox";
             this.inputTextBox.Size = new System.Drawing.Size(260, 20);
-            this.inputTextBox.TabIndex = 1;
+            this.inputTextBox.TabIndex = 0;
             // 
             // cancelButton
             // 
@@ -56,7 +56,7 @@
             this.okButton.Location = new System.Drawing.Point(116, 38);
             this.okButton.Name = "okButton";
             this.okButton.Size = new System.Drawing.Size(75, 23);
-            this.okButton.TabIndex = 3;
+            this.okButton.TabIndex = 1;
             this.okButton.Text = "OK";
             this.okButton.UseVisualStyleBackColor = true;
             this.okButton.Click += new System.EventHandler(this.okButton_Click);
